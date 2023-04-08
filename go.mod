@@ -1,4 +1,4 @@
-module minimalism_gin
+module github.com/FelixWuu/minimalism_gin
 
 go 1.20
 

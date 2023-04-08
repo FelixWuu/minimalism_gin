@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/FelixWuu/minimalism_gin/response"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -8,11 +9,17 @@ import (
 func main() {
 	router := gin.Default()
 
-	router.GET("/index", func(context *gin.Context) {
-		context.String(http.StatusOK, "Hello NutCat!")
+	router.GET("", func(context *gin.Context) {
+		context.String(http.StatusOK, "路径输对了吗？")
 	})
 
-	router.Run(":8080")
-	// another way to start
-	//http.ListenAndServe(":8080", router)
+	router.LoadHTMLGlob("templates/*")
+
+	router.GET("/rsp/string", response.StringResponse)
+	router.GET("/rsp/json", response.JSONResponse)
+	router.GET("rsp/html", response.HTMLResponse)
+	router.GET("rsp/xml", response.XMLResponse)
+	router.GET("rsp/yaml", response.YAMLResponse)
+
+	router.Run()
 }
