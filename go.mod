@@ -1,0 +1,1 @@
+module minimalism_gin
