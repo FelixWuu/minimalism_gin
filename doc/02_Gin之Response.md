@@ -186,3 +186,56 @@ router.GET("rsp/yaml", response.YAMLResponse)
 注：浏览器可能会跳转到下载连接，而不是显示出来，可以用 postman 看下结果
 
 ![https://pic.imgdb.cn/item/6431bd440d2dde57774e0da7.png](https://pic.imgdb.cn/item/6431bd440d2dde57774e0da7.png)
+
+## 2. 重定向
+
+### gin 如何实现重定向
+
+所谓重定向，就是将原始的 URL 变为一个新的 URL，然后用新 URL 路由到的处理器中。Gin中重定向很简单。内部、外部重定向均支持。
+
+重定向的方式有两种，一种是 **HTTP 重定向**，另一种是**路由重定向**
+
+```go
+func HTTPRedirectResponse(c *gin.Context) {
+	c.Redirect(http.StatusMovedPermanently, "https://github.com/FelixWuu/minimalism_gin")
+}
+```
+
+```go
+router.GET("/rsp/http_redirect", response.HTTPRedirectResponse)
+	router.GET("/rsp/router_redirect", func(context *gin.Context) {
+		context.Request.URL.Path = "/rsp/html"
+		router.HandleContext(context)
+	})
+```
+
+我们访问 [http://127.0.0.1:8080/rsp/router_redirect](http://127.0.0.1:8080/rsp/router_redirect) 时，会重定向到我们的 html 去
+
+我们访问 [http://127.0.0.1:8080/rsp/http_redirect](http://127.0.0.1:8080/rsp/http_redirect) 时，会重定向到我们 github 项目去
+
+### 重定向的作用是什么
+
+重定向（redirect）是指在 web 应用程序中，服务器将客户端的请求重定向到另一个 url 地址。**重定向通常用于网站的迁移、url 的更改、防止死链接等场景。**
+
+在 http 协议中，重定向通过状态码来实现。以下是几种重定向状态码及其含义：
+
+- **301 Moved Permanently**：永久重定向。表示被请求的资源已经被永久转移到了新位置，并且任何对该资源的引用都应该使用新的 uri。
+- **302 Found**：临时重定向。表示被请求的资源已经被临时转移到了新位置，新位置的 uri 也会在响应中返回。
+- **303 See Other**：表示对请求的资源进行了替换或更新。或者是告诉浏览器使用 get 方法重定向到另一个 uri。
+- **304 Not Modified**：表示客户端发送的条件式请求（如if-modified-since）未被满足，服务器返回该状态码时不带任何响应体。这通常会出现在缓存场景下，客户端请求的资源未发生变化，服务器可以直接让客户端使用缓存而不用再次下载同样的资源。
+- **307 Temporary Redirect**：表示被请求的资源已经被临时转移到了新位置，新位置的 uri 也会在响应中返回。与 302 状态码功能相同，但语义上更加严格。
+- **308 Permanent Redirect**：表示资源已经被永久性地移动到了新的位置，并且未来任何对该资源的请求都应该使用新的url进行。与301相比，308明确要求客户端不要修改请求url，而301则允许客户端在将来的请求中修改url。
+
+以上状态码都代表了重定向行为，但它们的语义略有不同，因此应根据具体情况选择合适的状态码。
+
+> 总结：重定向响应码用于指示客户端请求的资源已经被移动到其他url，因此需要重新发送新的请求：
+>
+- 永久重定向：301，308
+- 临时重定向：302，303， 307
+- 其他重定向：304
+
+> 注1：uri、url、urn
+>
+- uri 是统一资源标识符（uniform resource identifier）的缩写，它是用来唯一地标识一个资源的字符串标识符。uri包括两种类型：url 和 urn。
+- url 是统一资源定位符（uniform resource locator）的缩写，它是 uri 的一种，描述了一个资源的位置以及访问该资源所需的协议和参数。url 通常用于定位网络上的资源。
+- urn 是统一资源名称（uniform resource name）的缩写，也是 uri 的一种，用于命名资源而不指定其位置。urn 通过标识命名空间、标识符和可选的版本号来表示资源。

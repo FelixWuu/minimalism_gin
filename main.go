@@ -21,5 +21,11 @@ func main() {
 	router.GET("rsp/xml", response.XMLResponse)
 	router.GET("rsp/yaml", response.YAMLResponse)
 
+	router.GET("/rsp/http_redirect", response.HTTPRedirectResponse)
+	router.GET("/rsp/router_redirect", func(context *gin.Context) {
+		context.Request.URL.Path = "/rsp/html"
+		router.HandleContext(context)
+	})
+
 	router.Run()
 }

@@ -36,3 +36,7 @@ func XMLResponse(c *gin.Context) {
 func YAMLResponse(c *gin.Context) {
 	c.YAML(http.StatusOK, gin.H{"user": "FelixWuu", "score": 99.99, "level": 10})
 }
+
+func HTTPRedirectResponse(c *gin.Context) {
+	c.Redirect(http.StatusMovedPermanently, "https://github.com/FelixWuu/minimalism_gin")
+}
